@@ -1,0 +1,42 @@
+<flow>
+0. 사전작업
+ - 경로 변수 선언  
+ - path exists : result파일 유무 확인 bl
+ - if : bl기준 삭제
+ - copy file : 템플릿 복사 생성하여 인수 변환 out_strResultFilePath
+ - 가상의 dt 생성하여 인수 변환 out_dtBuild
+
+1. transactionItem 추출
+- use application : Config URL 활용
+ > 카테고리 영역 scraping하여 항목/URL을 dt로 추출 : io_dt_TransactionData로 행 전체를 TransactionItem으로 전달
+
+2.  transactionItem으로 자료 scaraping
+- use application : TransactionItem(1) 활용
+- 1~3위 scraping하여 dt_Build의 컬럼 형식으로 dt로 추출 : dtScrapingBefore3
+- 4위 이상 scraping하여 dt_Build의 컬럼 형식으로 dt로 추출 : dtScrapingAfter3
+- Merge Data Table : 후순위를 선순위 데이터에 맵핑
+- For each row in dt : 전체순위 데이터 loop하여 excel과 동일하게 dt 가공
+ ㄴ assign : strArr = 추출한 데이터의 공연정보 컬럼을 줄바꿈기준으로 arr 변수 생성
+ ㄴ add data row : 순위, 제목, strArr(0), strArr(1), 예매율 
+- Filter Data Table : 공연정보 컬럼 제거
+- Excel App Scope : 제출파일명으로 변환한 copy한 템플릿에 데이터 작성
+ ㄴ writeRange 
+  > 시트명 : TransactionItem(0) 
+
+
+
+4. data 기입 시 기간, 장소 분리
+ [순위, 제목, 기간, 장소, 예매율]
+
+5. 엑셀파일 첨부하여 메일 발송
+ [티켓랭킹] {0} 예스24티켓랭킹 과제 제출_{1}
+
+안녕하세요.
+예스24 티켓랭킹 파일 송부드립니다.
+감사합니다. 
+
+rpa.sj.jeong@gmail.com
+
+
+
+
